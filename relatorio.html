@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>MoneyGuard | Gastos por Categoria</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gastos-categoria-container {
+            max-width:400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        #categoryChart {
+            max-width: 500px;
+            max-height: 500px;
+            margin: 0 auto;
+        }
+        main{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            }
+        /* Adicione ou ajuste no seu style.css */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px; /* ou o valor que você usa */
+    flex-shrink: 0;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-wallet"></i>
+                <h2>MoneyGuard</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html"><i class="fas fa-home"></i>Dashboard</a>
+                <a href="relatorio.html"><i class="fas fa-chart-bar"></i>Relatório</a>
+                <a href="transações.html"><i class="fas fa-exchange-alt"></i>Transações</a>
+                <a href="metas.html"><i class="fas fa-bullseye"></i> Metas</a>
+                <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+                <a href="indexinss.html"><i class="fa-brands fa-youtube"></i> Fraude INSS</a>
+            </nav>
+        </aside>
+
+        <!-- Main content FORA da sidebar -->
+        <main>
+            <div class="gastos-categoria-container">
+                <h2>Gastos por Categoria</h2>
+                <canvas id="categoryChart" width="500" height="500"></canvas>
+            </div>
+        </main>
+    </div>
+   <script>
+    async function carregarGastosPorCategoria() {
+        // Busca transações e categorias da API
+        const [transRes, catRes] = await Promise.all([
+            fetch('http://127.0.0.1:5000/transacoes'),
+            fetch('http://127.0.0.1:5000/categorias')
+        ]);
+        const transacoes = await transRes.json();
+        const categorias = await catRes.json();
+
+        // Calcula o total de despesas por categoria
+        const gastosPorCategoria = categorias.map(cat => {
+            const total = transacoes
+                .filter(t => t.tipo === 'expense' && t.categoria_id === cat.id)
+                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            return { nome: cat.nome, total };
+        });
+
+        // Dados para o gráfico
+        const labels = gastosPorCategoria.map(g => g.nome);
+        const data = gastosPorCategoria.map(g => g.total);
+
+        // Cria o gráfico
+        new Chart(document.getElementById('categoryChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#4361ee', '#3f37c9', '#4895ef', '#4cc9f0', '#f72585', '#7209b7', '#b5179e'
+                    ]
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 50,    // aumenta o tamanho da caixa de cor
+                            boxHeight: 30,   // aumenta a altura da caixa de cor
+                            font: {
+                                size: 10,    // aumenta o tamanho da fonte
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    carregarGastosPorCategoria();
+</script>
+</body>
+</html>

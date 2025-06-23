@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyGuard | Metas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .metas-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+            padding: 32px 24px;
+        }
+        .metas-container h2 {
+            color: #3f37c9;
+            margin-bottom: 18px;
+        }
+        #meta-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        #meta-form input[type="text"] {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        #meta-form button {
+            background: #4361ee;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #meta-form button:hover {
+            background: #3f37c9;
+        }
+        .metas-list {
+            list-style: none;
+            padding: 0;
+        }
+        .metas-list li {
+            background: #f6f8fa;
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .metas-list button {
+            background: #e63946;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body> <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-wallet"></i>
+                <h2>MoneyGuard</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html"><i class="fas fa-home"></i>Dashboard</a>
+                <a href="relatorio.html"><i class="fas fa-chart-bar"></i>Relatório</a>
+                <a href="transações.html"><i class="fas fa-exchange-alt"></i>Transações</a>
+                <a href="metas.html"><i class="fas fa-bullseye"></i> Metas</a>
+                <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+                <a href="indexinss.html"><i class="fa-brands fa-youtube"></i> Fraude INSS</a>
+            </nav>
+        </aside>
+    <div class="metas-container">
+        <h2>Minhas Metas</h2>
+        <form id="meta-form">
+            <input type="text" id="meta-input" placeholder="Descreva sua meta..." required>
+            <button type="submit">Adicionar</button>
+        </form>
+        <ul class="metas-list" id="metas-list"></ul>
+    </div>
+    <script>
+        // Carregar metas do localStorage
+        function loadMetas() {
+            const metas = JSON.parse(localStorage.getItem('metas') || '[]');
+            const ul = document.getElementById('metas-list');
+            ul.innerHTML = metas.map((meta, idx) => `
+                <li>
+                    ${meta}
+                    <button onclick="removeMeta(${idx})">Excluir</button>
+                </li>
+            `).join('');
+        }
+
+        // Adicionar meta
+        document.getElementById('meta-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('meta-input');
+            const metas = JSON.parse(localStorage.getItem('metas') || '[]');
+            metas.push(input.value);
+            localStorage.setItem('metas', JSON.stringify(metas));
+            input.value = '';
+            loadMetas();
+        });
+
+        // Remover meta
+        function removeMeta(idx) {
+            const metas = JSON.parse(localStorage.getItem('metas') || '[]');
+            metas.splice(idx, 1);
+            localStorage.setItem('metas', JSON.stringify(metas));
+            loadMetas();
+        }
+
+        // Inicializar lista
+        loadMetas();
+    </script>
+</body>
+</html>
