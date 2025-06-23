@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>MoneyGuard | Transações</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+     <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-wallet"></i>
+                <h2>MoneyGuard</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html"><i class="fas fa-home"></i>Dashboard</a>
+                <a href="relatorio.html"><i class="fas fa-chart-bar"></i>Relatório</a>
+                <a href="transações.html"><i class="fas fa-exchange-alt"></i>Transações</a>
+                <a href="metas.html"><i class="fas fa-bullseye"></i> Metas</a>
+                <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+                <a href="indexinss.html"><i class="fa-brands fa-youtube"></i> Fraude INSS</a>
+            </nav>
+        </aside>
+    <div class="transacoes-container" style="max-width: 700px; margin: 40px auto;">
+        <h2>Adicionar Transação</h2>
+       <form id="transaction-form">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <select id="transaction-type" required>
+            <option value="income">Receita</option>
+            <option value="expense">Despesa</option>
+        </select>
+        <input type="number" id="transaction-amount" step="0.01" placeholder="Valor" required>
+        <select id="transaction-category" required></select>
+        <input type="date" id="transaction-date" required>
+        <input type="text" id="transaction-description" placeholder="Descrição" required>
+        <button type="submit">Adicionar</button>
+    </div>
+</form>
+
+        <h2 style="margin-top:40px;">Últimas Transações</h2>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody id="transactions-table"></tbody>
+        </table>
+    </div>
+    <script>
+        // Carregar categorias no select
+        async function loadCategorias() {
+            const res = await fetch('http://127.0.0.1:5000/categorias');
+            const categorias = await res.json();
+            const select = document.getElementById('transaction-category');
+            select.innerHTML = categorias.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+        }
+
+        // Carregar últimas transações
+        async function loadTransacoes() {
+            const [resTrans, resCat] = await Promise.all([
+                fetch('http://127.0.0.1:5000/transacoes'),
+                fetch('http://127.0.0.1:5000/categorias')
+            ]);
+            const transacoes = await resTrans.json();
+            const categorias = await resCat.json();
+            const tbody = document.getElementById('transactions-table');
+            tbody.innerHTML = transacoes.slice(-10).reverse().map(t => `
+                <tr>
+                    <td>${t.descricao}</td>
+                    <td>${categorias.find(c => c.id === t.categoria_id)?.nome || 'Desconhecida'}</td>
+                    <td>R$ ${Math.abs(t.valor).toFixed(2)}</td>
+                    <td>${new Date(t.data).toLocaleDateString()}</td>
+                    <td>${t.tipo === 'income' ? 'Receita' : 'Despesa'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Adicionar transação
+        document.getElementById('transaction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const user_id = localStorage.getItem('user_id') || 1; // ajuste se necessário
+            const tipo = document.getElementById('transaction-type').value;
+            const valor = parseFloat(document.getElementById('transaction-amount').value);
+            const categoria_id = parseInt(document.getElementById('transaction-category').value);
+            const data = document.getElementById('transaction-date').value;
+            const descricao = document.getElementById('transaction-description').value;
+
+            const response = await fetch('http://127.0.0.1:5000/transacoes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario_id: user_id, tipo, valor, descricao, data, categoria_id })
+            });
+
+            if (response.ok) {
+                alert('Transação adicionada com sucesso!');
+                e.target.reset();
+                loadTransacoes();
+            } else {
+                alert('Erro ao adicionar transação.');
+            }
+        });
+
+        // Inicialização
+        loadCategorias();
+        loadTransacoes();
+    </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyGuard | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+   /* Estilo para o container principal */
+.transacoes-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    padding: 32px 24px;
+}
+
+/* Título */
+.transacoes-container h2 {
+    margin-bottom: 18px;
+    color: #3f37c9;
+    font-size: 1.5rem;
+}
+
+/* Formulário de transação */
+#transaction-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+#transaction-form select,
+#transaction-form input[type="number"],
+#transaction-form input[type="date"],
+#transaction-form input[type="text"] {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    min-width: 120px;
+}
+
+#transaction-form button[type="submit"] {
+    background: #4361ee;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#transaction-form button[type="submit"]:hover {
+    background: #3f37c9;
+}
+
+/* Tabela de transações */
+.transacoes-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    background: #fafbfc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.transacoes-container th, .transacoes-container td {
+    padding: 10px 8px;
+    text-align: left;
+}
+
+.transacoes-container th {
+    background: #e0e7ff;
+    color: #3f37c9;
+    font-weight: 600;
+}
+
+.transacoes-container tr:nth-child(even) {
+    background: #f6f8fa;
+}
+
+.transacoes-container tr:hover {
+    background: #e0e7ff33;
+}
+
+.transacoes-container td {
+    color: #222;
+}
+
+/* Valor negativo em vermelho, positivo em verde */
+.transacoes-container td.valor-negativo {
+    color: #e63946;
+    font-weight: bold;
+}
+.transacoes-container td.valor-positivo {
+    color: #2ecc40;
+    font-weight: bold;
+}     
+
+
+
+
+        
+    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-wallet"></i>
+                <h2>MoneyGuard</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+               <nav class="sidebar-nav">
+    <a href="dashboard.html" ><i class="fas fa-home"></i>Dashboard</a>
+    <a href="relatorio.html"><i class="fas fa-chart-bar"></i>Relatório</a>
+    <a href="transações.html" ><i class="fas fa-exchange-alt"></i>Transações</a>
+    <a href="metas.html">
+        <i class="fas fa-bullseye"></i> Metas
+    </a>
+    <a href="#">
+        <i class="fas fa-cog"></i> Configurações
+    </a>
+    <a href="indexinss.html">
+        <i class="fa-brands fa-youtube"></i> Fraude INSS
+    </a>
+    <nav>
+</nav>
+            
+
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Usuario" alt="Usuário">
+                <div>
+                    <strong>Usuário Admin</strong>
+                    <small>admin@moneyguard.com</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="btn-notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button id="logout-btn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Conteúdo será carregado aqui via JS -->
+            <div class="content-area" id="content-area">
+                <!-- Dashboard será injetado aqui -->
+            </div>
+        </main>
+    </div>
+<div id="notification-popup" class="notification-popup hidden">
+    <h4>Últimas Transações</h4>
+    <ul id="notification-list"></ul>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
